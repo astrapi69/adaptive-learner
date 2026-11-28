@@ -3267,7 +3267,6 @@
       "ready_to_share": "Her şey hazır. Dersini pull request olarak paylaş?",
       "share_button": "Paylaş",
       "thanks": "Paylaştığınız için teşekkürler! Katkınız diğer öğrenenlere yardımcı oluyor.",
-      "submitted": "GitHub'da dersinizin önceden doldurulduğu bir pull request açıldı. İnceleyin ve \"Create pull request\" düğmesine tıklayın - içerik deposunun CI'si otomatik olarak doğrular.",
       "view_submission": "Pull request'i GitHub'da aç",
       "view_upload": "GitHub yükleme sayfasını aç",
       "popup_blocked": "Tarayıcın GitHub sekmesini engelledi. Manuel olarak açmak için aşağıdaki bağlantıya tıkla.",

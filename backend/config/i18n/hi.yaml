@@ -3018,7 +3018,6 @@ content:
     ready_to_share: सब कुछ तैयार है। अपने पाठ को pull request के रूप में साझा करें?
     share_button: साझा करें
     thanks: साझा करने के लिए धन्यवाद! आपका योगदान अन्य शिक्षार्थियों की मदद करता है।
-    submitted: GitHub पर आपके पाठ के साथ एक pull request खोला गया। इसकी समीक्षा करें और "Create pull request" पर क्लिक करें - content-repo CI इसे स्वचालित रूप से सत्यापित करता है।
     view_submission: GitHub पर pull request खोलें
     view_upload: GitHub अपलोड पेज खोलें
     popup_blocked: आपके ब्राउज़र ने GitHub टैब को रोक दिया। इसे मैन्युअल रूप से खोलने के लिए नीचे दिए गए लिंक पर क्लिक करें।

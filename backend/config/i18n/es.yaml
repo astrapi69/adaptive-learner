@@ -3025,7 +3025,6 @@ content:
     ready_to_share: "Todo listo. ¿Compartir tu lección como pull request?"
     share_button: Compartir
     thanks: ¡Gracias por compartir! Tu contribución ayuda a otras personas que aprenden.
-    submitted: "Se abrió un pull request en GitHub con tu lección rellenada. Revísalo y haz clic en \"Create pull request\"; la CI del repositorio de contenido lo valida automáticamente."
     view_submission: "Abrir el pull request en GitHub"
     view_upload: "Abrir la página de subida de GitHub"
     popup_blocked: "Tu navegador bloqueó la pestaña de GitHub. Haz clic en el enlace de abajo para abrirla manualmente."

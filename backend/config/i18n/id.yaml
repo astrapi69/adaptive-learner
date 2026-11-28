@@ -3034,7 +3034,6 @@ content:
     ready_to_share: "Semuanya siap. Bagikan pelajaranmu sebagai pull request?"
     share_button: Bagikan
     thanks: Terima kasih telah membagikan! Kontribusimu membantu pembelajar lain.
-    submitted: "Sebuah pull request telah dibuka di GitHub dengan pelajaranmu yang sudah terisi. Tinjau dan klik \"Create pull request\" - CI content-repo memvalidasinya secara otomatis."
     view_submission: "Buka pull request di GitHub"
     view_upload: "Buka halaman unggah GitHub"
     popup_blocked: "Peramban kamu memblokir tab GitHub. Klik tautan di bawah untuk membukanya secara manual."
