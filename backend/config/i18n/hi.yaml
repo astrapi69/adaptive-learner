@@ -684,7 +684,7 @@ settings:
   cluster_data_sources: "स्रोत"
   cluster_data_sources_desc: "सामग्री रिपॉजिटरी और निर्देशिका में आपकी प्रविष्टि।"
   cluster_data_sync: "सिंक"
-  cluster_data_sync_desc: "डिवाइस जोड़ें और डेटा समान रखें।"
+  cluster_data_sync_desc: "डिवाइस युग्मन और डेटा सिंक: तैयारी में।"
   cluster_data_offline: "ऑफ़लाइन सामग्री"
   cluster_data_offline_desc: "पाठ कैश और सहेजे गए पाठों का आकार।"
   cluster_data_backup: "बैकअप और निर्यात"
@@ -1368,8 +1368,10 @@ sync:
   no_camera: कोई कैमरा उपलब्ध नहीं
   no_camera_hint: इस डिवाइस में कोई कैमरा उपलब्ध नहीं है। इसके बजाय लिंक-पेस्ट करें विकल्प का उपयोग करें।
   no_user: युग्मन कोड बनाने से पहले ऑनबोर्डिंग पूरी करें।
+  not_available_yet: "सिंक अभी उपलब्ध नहीं है।"
   now: अभी सिंक करें
   pair_error: डिवाइस युग्मित नहीं हो सका।
+  pairing_unavailable: "युग्मन तैयारी में है: अभी कोई डिवाइस युग्मन कोड का उपयोग नहीं कर सकता।"
   paired: डिवाइस युग्मित हुआ।
   paired_at: युग्मित
   pairing: युग्मित किया जा रहा है…
