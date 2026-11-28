@@ -8,10 +8,27 @@
  * onUserConsoleLog was pending" failure of the coverage run).
  */
 
-import {afterEach, describe, expect, it, vi} from "vitest";
+import {afterEach, beforeEach, describe, expect, it, vi} from "vitest";
+
+import {existsSync} from "node:fs";
+import {dirname, resolve} from "node:path";
+import {fileURLToPath} from "node:url";
+
+import {
+    expectUnmockedFetch,
+    isBaselinedTestFile,
+    recordUnmockedFetch,
+    takeUnmockedFetches,
+} from "./network-guard";
+import baseline from "./unmocked-fetch-baseline.json";
 
 afterEach(() => {
     vi.unstubAllGlobals();
+});
+
+// Every case here lets a request find no mock on purpose.
+beforeEach(() => {
+    expectUnmockedFetch();
 });
 
 describe("the unit-test network guard", () => {
@@ -44,5 +61,61 @@ describe("the unit-test network guard", () => {
 
         vi.unstubAllGlobals();
         await expect(fetch("/anything")).rejects.toThrow(/not mocked/);
+    });
+});
+
+describe("a request that found no mock is counted against its test (#3870)", () => {
+    it("records the URL of every rejected request", async () => {
+        await fetch("/api/a").catch(() => undefined);
+        await fetch("/api/b").catch(() => undefined);
+
+        expect(takeUnmockedFetches()).toEqual({urls: ["/api/a", "/api/b"], expected: true});
+    });
+
+    it("starts every test with an empty record and no exemption", () => {
+        // The exemption of this file's beforeEach is taken here, as the
+        // guard's afterEach takes it after every test.
+        takeUnmockedFetches();
+
+        expect(takeUnmockedFetches()).toEqual({urls: [], expected: false});
+    });
+
+    it("does not count a request a mock answered", async () => {
+        vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response("mocked")));
+        await fetch("/api/mocked");
+
+        expect(takeUnmockedFetches().urls).toEqual([]);
+    });
+
+    it("hands the record over once", () => {
+        recordUnmockedFetch("/api/once");
+
+        expect(takeUnmockedFetches().urls).toEqual(["/api/once"]);
+        expect(takeUnmockedFetches().urls).toEqual([]);
+    });
+});
+
+describe("the baseline of files that still make un-mocked requests (#3870)", () => {
+    const frontendRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
+    const files = Object.keys(baseline.files);
+
+    it("only shrinks: it holds at most the 61 files of the measuring run", () => {
+        expect(files.length).toBeGreaterThan(0);
+        expect(files.length).toBeLessThanOrEqual(61);
+    });
+
+    it("names only test files that exist", () => {
+        // A renamed or deleted file must not keep an exemption nobody sees.
+        expect(files.filter((file) => !existsSync(resolve(frontendRoot, file)))).toEqual([]);
+    });
+
+    it("exempts a listed file by the path Vitest reports, and no other", () => {
+        expect(isBaselinedTestFile(`/any/checkout/frontend/${files[0]}`)).toBe(true);
+        expect(isBaselinedTestFile("/any/checkout/frontend/src/test/network-guard.test.ts")).toBe(false);
+        expect(isBaselinedTestFile(undefined)).toBe(false);
+    });
+
+    it("does not exempt this file: a new test file is held to the guard", () => {
+        expect(isBaselinedTestFile(expect.getState().testPath)).toBe(false);
     });
 });
