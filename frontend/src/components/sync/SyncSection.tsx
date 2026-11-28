@@ -59,7 +59,7 @@ const DEFAULT_BACKEND_PORT = 18001;
  * instead of producing a code nobody can use (#3858, state policy #335).
  * LAN mode sets this to true, together with the three-way gate.
  */
-export const PAIRING_AVAILABLE: boolean = false;
+const PAIRING_AVAILABLE: boolean = false;
 
 export default function SyncSection() {
     const {t} = useI18n();
