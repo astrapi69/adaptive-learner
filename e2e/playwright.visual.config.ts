@@ -23,6 +23,9 @@
 import {defineConfig, devices} from "@playwright/test";
 import {BASELINE_REFRESH} from "./visual/refresh-mode";
 
+/** The suite that runs in the touch projects only (#3783). */
+const TOUCH_SPEC = /touch-surfaces\.spec\.ts$/;
+
 const PREVIEW_PORT =
     Number(process.env.ADAPTIVE_LEARNER_VISUAL_PREVIEW_PORT) || 4178;
 
@@ -144,7 +147,36 @@ export default defineConfig({
         {
             name: "visual",
             testDir: "./visual",
+            testIgnore: TOUCH_SPEC,
             use: {...devices["Desktop Chrome"], viewport: {width: 1440, height: 900}},
+        },
+        // #3783 - the project above is one desktop Chrome; its "mobile"
+        // images are a narrow desktop (Windows user agent, fine pointer, no
+        // touch). These two give the surfaces that render differently on a
+        // phone an image of their own: an Android phone, where Chromium can
+        // offer the install, and an iPhone user agent, which the app reads
+        // for the home-screen card. Both run on Chromium: the suite pins
+        // Chromium's raster path (launchOptions above), and the iPhone
+        // profile is here for the user-agent branch, not for WebKit
+        // rendering, which the WebKit gate covers. The device scale factor
+        // is 1 so an image has the size of the CSS viewport: at the
+        // devices' real factor a full settings page is several megabytes.
+        {
+            name: "touch-android",
+            testDir: "./visual",
+            testMatch: TOUCH_SPEC,
+            use: {...devices["Pixel 7"], deviceScaleFactor: 1},
+        },
+        {
+            name: "touch-ios",
+            testDir: "./visual",
+            testMatch: TOUCH_SPEC,
+            use: {
+                ...devices["iPhone 14"],
+                browserName: "chromium",
+                defaultBrowserType: "chromium",
+                deviceScaleFactor: 1,
+            },
         },
     ],
 });
