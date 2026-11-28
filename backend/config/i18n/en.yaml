@@ -682,7 +682,7 @@ settings:
   cluster_data_sources: "Sources"
   cluster_data_sources_desc: "Content repositories and your entry in the directory."
   cluster_data_sync: "Sync"
-  cluster_data_sync_desc: "Pair devices and keep data in step."
+  cluster_data_sync_desc: "Pairing devices and syncing data: in preparation."
   cluster_data_offline: "Offline content"
   cluster_data_offline_desc: "The lesson cache and the size of saved lessons."
   cluster_data_backup: "Backup and export"
@@ -1369,8 +1369,10 @@ sync:
   no_camera: No camera available
   no_camera_hint: This device has no camera available. Use the paste-the-link option instead.
   no_user: Complete the onboarding before generating a pairing code.
+  not_available_yet: "Sync is not available yet."
   now: Sync Now
   pair_error: Could not pair the device.
+  pairing_unavailable: "Pairing is in preparation: no device can redeem a pairing code yet."
   paired: Device paired.
   paired_at: Paired
   pairing: Pairing…

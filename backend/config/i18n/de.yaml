@@ -682,7 +682,7 @@ settings:
   cluster_data_sources: "Quellen"
   cluster_data_sources_desc: "Inhalte-Repositorys und dein Eintrag im Verzeichnis."
   cluster_data_sync: "Synchronisation"
-  cluster_data_sync_desc: "Geräte koppeln und Daten abgleichen."
+  cluster_data_sync_desc: "Geräte koppeln und Daten abgleichen: in Vorbereitung."
   cluster_data_offline: "Offline-Inhalte"
   cluster_data_offline_desc: "Der Lektionscache und die Größe gespeicherter Lektionen."
   cluster_data_backup: "Sichern und Exportieren"
@@ -1369,8 +1369,10 @@ sync:
   no_camera: Keine Kamera verfügbar
   no_camera_hint: Dieses Gerät hat keine Kamera. Nutze stattdessen den Einfüge-Modus.
   no_user: Schließe das Onboarding ab, bevor du einen Kopplungscode erzeugst.
+  not_available_yet: "Sync ist noch nicht verfügbar."
   now: Jetzt synchronisieren
   pair_error: Gerät konnte nicht gekoppelt werden.
+  pairing_unavailable: "Die Kopplung ist in Vorbereitung: Noch kann kein Gerät einen Kopplungscode einlösen."
   paired: Gerät gekoppelt.
   paired_at: Gekoppelt
   pairing: Koppele…
