@@ -202,8 +202,6 @@ the **Voice** card:
 
 - **Show speech buttons** - adds a speaker button next to AI replies
   and Assessment results that reads them aloud.
-- **Auto-play AI responses** - speaks every AI reply automatically
-  (default OFF - surprise audio is rarely what you want).
 - **Voice** - the voice to read with. The default prefers a voice that
   runs on your device for your project language; with the default, an
   online voice reads only when your device has none for that language,

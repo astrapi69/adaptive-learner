@@ -228,9 +228,6 @@ contient la carte **Voix** :
 - **Afficher les boutons de lecture** - ajoute un bouton haut-parleur à
   côté des réponses de l'IA et des résultats de l'Évaluation, qui les
   lit à voix haute.
-- **Lire automatiquement les réponses IA** - lit chaque réponse de l'IA
-  automatiquement (désactivé par défaut - un son inattendu est rarement
-  souhaité).
 - **Voix** - la voix utilisée pour la lecture. Par défaut, une voix qui
   s'exécute localement sur votre appareil est privilégiée pour la langue
   de votre projet ; avec ce réglage par défaut, une voix en ligne ne lit
