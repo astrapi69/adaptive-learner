@@ -23,7 +23,6 @@
  *   - ttsEnabled: true (speech buttons render when the browser supports
  *     speechSynthesis)
  *   - sttEnabled: true
- *   - autoPlayAi: false (don't surprise the user with sound)
  *   - ttsRate: 1.0  (Web Speech default)
  *   - ttsPitch: 1.0
  *   - ttsVoiceName: ""  (empty = the local-first ``pickVoice(lang)``; a
@@ -48,6 +47,8 @@ export const VOICE_PREF_BLOCK_KEY = "adaptive-learner.voice.prefs";
 const LEGACY_KEYS = {
     ttsEnabled: "adaptive-learner.voice.tts_enabled",
     sttEnabled: "adaptive-learner.voice.stt_enabled",
+    // #3872: the switch behind this key is gone, since no code ever spoke an
+    // AI answer. The key stays listed so the migration still removes it.
     autoPlay: "adaptive-learner.voice.auto_play_ai",
     rate: "adaptive-learner.voice.tts_rate",
     pitch: "adaptive-learner.voice.tts_pitch",
@@ -61,7 +62,6 @@ const LEGACY_KEYS = {
 export interface VoicePrefs {
     ttsEnabled: boolean;
     sttEnabled: boolean;
-    autoPlayAi: boolean;
     ttsRate: number;
     ttsPitch: number;
     ttsVoiceName: string;
@@ -75,7 +75,6 @@ function defaults(): VoicePrefs {
     return {
         ttsEnabled: true,
         sttEnabled: true,
-        autoPlayAi: false,
         ttsRate: 1.0,
         ttsPitch: 1.0,
         ttsVoiceName: "",
@@ -120,7 +119,6 @@ function coercePrefs(raw: Record<string, unknown>): VoicePrefs {
     return {
         ttsEnabled: coerceBool(raw.ttsEnabled, base.ttsEnabled),
         sttEnabled: coerceBool(raw.sttEnabled, base.sttEnabled),
-        autoPlayAi: coerceBool(raw.autoPlayAi, base.autoPlayAi),
         ttsRate: coerceNumber(raw.ttsRate, base.ttsRate, 0.5, 2.0),
         ttsPitch: coerceNumber(raw.ttsPitch, base.ttsPitch, 0.5, 2.0),
         ttsVoiceName: coerceString(raw.ttsVoiceName, base.ttsVoiceName),
@@ -151,7 +149,6 @@ function readLegacyPrefs(): {prefs: VoicePrefs; found: boolean} {
     };
     pick("ttsEnabled", LEGACY_KEYS.ttsEnabled);
     pick("sttEnabled", LEGACY_KEYS.sttEnabled);
-    pick("autoPlayAi", LEGACY_KEYS.autoPlay);
     pick("ttsRate", LEGACY_KEYS.rate);
     pick("ttsPitch", LEGACY_KEYS.pitch);
     pick("ttsVoiceName", LEGACY_KEYS.voiceName);
@@ -159,6 +156,9 @@ function readLegacyPrefs(): {prefs: VoicePrefs; found: boolean} {
     pick("pronunciationEnabled", LEGACY_KEYS.pronunciation);
     pick("lessonSpeed", LEGACY_KEYS.lessonSpeed);
     pick("lessonAutoRead", LEGACY_KEYS.lessonAutoRead);
+    // Read by nothing any more (#3872), but its presence still starts the
+    // cleanup, or a browser holding only this key would keep it for good.
+    if (localStorage.getItem(LEGACY_KEYS.autoPlay) !== null) found = true;
     return {prefs: coercePrefs(raw), found};
 }
 
@@ -222,10 +222,6 @@ export function writeTtsEnabled(v: boolean): void {
 /** Persist whether STT (voice dictation) is enabled. */
 export function writeSttEnabled(v: boolean): void {
     patch("sttEnabled", v);
-}
-/** Persist whether AI replies are auto-played aloud. */
-export function writeAutoPlayAi(v: boolean): void {
-    patch("autoPlayAi", v);
 }
 /** Persist the TTS speaking rate (clamped to 0.5..2.0). */
 export function writeTtsRate(v: number): void {
