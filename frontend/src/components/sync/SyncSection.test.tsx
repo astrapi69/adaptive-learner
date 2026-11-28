@@ -58,6 +58,29 @@ describe("SyncSection — unpaired", () => {
         expect(host.value.length).toBeGreaterThan(0);
     });
 
+    it("disables the pairing-code button with its reason: no device can redeem a code (#3858)", () => {
+        renderSection();
+
+        const button = screen.getByTestId("sync-generate-button") as HTMLButtonElement;
+        const reason = screen.getByTestId("sync-pairing-unavailable");
+        expect(button.disabled).toBe(true);
+        // The app renders German by default; either catalog may answer.
+        expect(reason.textContent).toMatch(/no device can redeem|kein Gerät/i);
+        expect(button.title).toBe(reason.textContent);
+        expect(button.getAttribute("aria-describedby")).toBe(reason.id);
+        expect((screen.getByTestId("sync-host-input") as HTMLInputElement).disabled).toBe(true);
+        expect((screen.getByTestId("sync-port-input") as HTMLInputElement).disabled).toBe(true);
+    });
+
+    it("does not describe a pairing nobody can complete (#3858)", () => {
+        renderSection();
+
+        const section = screen.getByTestId("settings-sync");
+        expect(section.textContent).not.toMatch(/Open this app on your phone|Öffne die App am Handy/i);
+        expect(section.textContent).not.toMatch(/Pair a phone and a desktop|Koppele Handy und Desktop/i);
+        expect(screen.queryByTestId("sync-qr-panel")).toBeNull();
+    });
+
     it("renders the Dexie-mode phone view when storage mode is dexie", () => {
         localStorage.setItem("adaptive-learner.storage_mode", "dexie");
         renderSection();

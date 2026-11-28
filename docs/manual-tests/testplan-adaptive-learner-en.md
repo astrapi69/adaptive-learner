@@ -1159,7 +1159,8 @@ areas of the Data tab in the fixed #1451 order.
       area whose heading is at the top of the screen; the address does NOT
       change
 - [ ] TC-0294 Both storage modes (API + Dexie): bar and deep link behave the same;
-      in Dexie mode the "Sync" area shows the desktop-only notice
+      in Dexie mode the "Sync" area shows the notice "Sync is not available
+      yet."
 
 ### TS-0043 Learning tab: section bar + deep link (#2961)
 
@@ -4045,6 +4046,18 @@ keep the developer tools open on the Network tab.
       dialog appears, neither version of the entry contains an `api_key_`
       field, and "Smart Merge (AI)" sends the AI provider no key (Network
       tab: the request to the provider)
+
+### TS-0142 The Sync area says what works today (#3858)
+
+- [ ] TC-1012 Desktop app (storage mode Server), Settings > Data > Sync: the
+      description of the area ends with "in preparation"; "Generate pairing
+      code" is disabled, above it stands the reason ("Pairing is in
+      preparation: no device can redeem a pairing code yet."), the same text
+      shows as the tooltip of the button; host and port cannot be changed; no
+      QR code appears
+- [ ] TC-1013 Browser mode (GitHub Pages / Dexie), the same area: the heading
+      "Sync" stays visible, below it reads "Sync is not available yet."; no
+      pointer to the desktop app
 
 ## Automated: Unit + Component Tests (Vitest, 7200+;
 ## current number see docs/audits/current-coverage.md)

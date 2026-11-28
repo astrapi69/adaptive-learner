@@ -6,6 +6,8 @@
  *   - Unpaired state:
  *       In API mode -> "Generate pairing code" produces a QR + a
  *       short ``adaptive-learner://`` link the phone can paste.
+ *       Disabled with its reason while {@link PAIRING_AVAILABLE} is
+ *       false: no device can redeem the code yet (#3858).
  *       In Dexie mode -> "Connect to a desktop" accepts the
  *       pasted link and verifies it against the remote backend.
  *   - Paired state:
@@ -19,6 +21,7 @@
  */
 
 import {lazy, Suspense, useEffect, useRef, useState} from "react";
+import {Hourglass} from "lucide-react";
 import QRCode from "qrcode";
 
 import {Button} from "@/components/ui/button";
@@ -47,6 +50,16 @@ import SyncConflictDialog from "./SyncConflictDialog";
 const QRScannerModal = lazy(() => import("./QRScannerModal"));
 
 const DEFAULT_BACKEND_PORT = 18001;
+
+/**
+ * Whether a pairing code can be redeemed by any device. It cannot: the view
+ * that redeems one renders only outside API mode, where the feature gate
+ * disables the whole section (SYNC-UI-GATE, architecture.md). Until LAN mode
+ * lands, "Generate pairing code" is therefore disabled with its reason
+ * instead of producing a code nobody can use (#3858, state policy #335).
+ * LAN mode sets this to true, together with the three-way gate.
+ */
+const PAIRING_AVAILABLE: boolean = false;
 
 export default function SyncSection() {
     const {t} = useI18n();
@@ -186,9 +199,11 @@ export default function SyncSection() {
             testid="settings-sync"
             className="mt-6"
         >
-            <p className="muted">
-                {t("sync.intro")}
-            </p>
+            {(config || PAIRING_AVAILABLE) && (
+                <p className="muted">
+                    {t("sync.intro")}
+                </p>
+            )}
 
             {config ? (
                 <PairedView
@@ -392,9 +407,25 @@ function DesktopUnpairedView({
 
     return (
         <div data-testid="sync-desktop-unpaired">
-            <p className="muted">
-                {t("sync.desktop_hint")}
-            </p>
+            {PAIRING_AVAILABLE ? (
+                <p className="muted">
+                    {t("sync.desktop_hint")}
+                </p>
+            ) : (
+                <p
+                    id="sync-pairing-unavailable"
+                    data-testid="sync-pairing-unavailable"
+                    className="mb-3 flex items-start gap-2 rounded-app border border-border bg-card px-3 py-2 text-sm text-fg-secondary"
+                >
+                    <Hourglass size={16} aria-hidden="true" className="mt-0.5 shrink-0" />
+                    <span>
+                        {t(
+                            "sync.pairing_unavailable",
+                            "Pairing is in preparation: no device can redeem a pairing code yet.",
+                        )}
+                    </span>
+                </p>
+            )}
             <div className="flex gap-2 flex-wrap items-end mb-3">
                 <label className="flex flex-col">
                     <small className="opacity-70">
@@ -404,6 +435,7 @@ function DesktopUnpairedView({
                         type="text"
                         value={host}
                         onChange={(e) => setHost(e.target.value)}
+                        disabled={!PAIRING_AVAILABLE}
                         data-testid="sync-host-input"
                         className="py-[0.35rem] px-2 min-w-45"
                     />
@@ -416,6 +448,7 @@ function DesktopUnpairedView({
                         onChange={(e) =>
                             setPort(parseInt(e.target.value, 10) || DEFAULT_BACKEND_PORT)
                         }
+                        disabled={!PAIRING_AVAILABLE}
                         data-testid="sync-port-input"
                         className="py-[0.35rem] px-2 w-25"
                     />
@@ -424,7 +457,16 @@ function DesktopUnpairedView({
                     type="button"
                     variant="default"
                     onClick={generatePairing}
-                    disabled={busy}
+                    disabled={busy || !PAIRING_AVAILABLE}
+                    title={
+                        PAIRING_AVAILABLE
+                            ? undefined
+                            : t(
+                                  "sync.pairing_unavailable",
+                                  "Pairing is in preparation: no device can redeem a pairing code yet.",
+                              )
+                    }
+                    aria-describedby={PAIRING_AVAILABLE ? undefined : "sync-pairing-unavailable"}
                     data-testid="sync-generate-button"
                 >
                     {busy
