@@ -225,27 +225,36 @@ describe("ShareWizard: share + celebration (step 4)", () => {
     );
     expect(emitCelebration).toHaveBeenCalledWith({ type: "confetti" });
     expect(screen.getByTestId("share-wizard-celebration")).toBeInTheDocument();
-    // Small single lesson -> PR fast lane: create-file URL + PR-link.
+    // Single lesson -> create-file URL + paste instructions + PR-link.
     expect(openUrl.mock.calls[0][0]).toContain("/new/main?");
     expect(
-      screen.getByTestId("share-wizard-pr-instructions"),
+      screen.getByTestId("share-wizard-paste-instructions"),
     ).toBeInTheDocument();
+    expect(screen.queryByTestId("share-wizard-pr-instructions")).toBeNull();
     expect(screen.getByTestId("share-wizard-pr-link")).toHaveAttribute(
       "href",
       expect.stringContaining("github.com"),
     );
   });
 
-  it("opens the GitHub create-file URL and does NOT download for a small lesson", () => {
-    // Regression (P0): a small lesson must go straight to the PR
-    // create-file URL — no download / save dialog.
+  it("small lesson: the opened URL carries no lesson content, the file is downloaded (#3839)", () => {
+    // GitHub receives the address the moment the editor opens, before
+    // the learner confirms anything. A lesson small enough for the URL
+    // used to travel there whole. Now only the path and the commit
+    // metadata are in it, and the JSON is downloaded for pasting.
     const { openUrl, downloadLesson } = renderWizard();
     advanceToStep4();
     fireEvent.click(screen.getByTestId("share-wizard-share"));
 
     expect(openUrl).toHaveBeenCalledTimes(1);
-    expect(openUrl.mock.calls[0][0]).toContain("/new/main?");
-    expect(downloadLesson).not.toHaveBeenCalled();
+    const opened = openUrl.mock.calls[0][0];
+    expect(opened).toContain("/new/main?");
+    const query = new URL(opened).searchParams;
+    expect(query.get("value")).toBeNull();
+    expect([...query.keys()].sort()).toEqual(["description", "filename", "message"]);
+    expect(query.get("filename")).toMatch(/^sets\/.+\/lessons\/.+\.json$/);
+    expect(query.get("message")).toContain("Konjugation Präteritum");
+    expect(downloadLesson).toHaveBeenCalledTimes(1);
     expect(
       screen.queryByTestId("share-wizard-popup-blocked"),
     ).not.toBeInTheDocument();
@@ -265,8 +274,8 @@ describe("ShareWizard: share + celebration (step 4)", () => {
       "href",
       expect.stringContaining("github.com"),
     );
-    // PR path: still no download even when blocked.
-    expect(downloadLesson).not.toHaveBeenCalled();
+    // The file is downloaded for pasting, blocked popup or not (#3839).
+    expect(downloadLesson).toHaveBeenCalledTimes(1);
   });
 
   it("opens GitHub BEFORE downloading (gesture-safe order)", () => {
