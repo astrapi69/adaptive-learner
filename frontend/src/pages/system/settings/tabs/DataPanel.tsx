@@ -1,4 +1,4 @@
-import { Monitor } from "lucide-react";
+import { Hourglass } from "lucide-react";
 import { useRef } from "react";
 import type { CSSProperties } from "react";
 
@@ -131,21 +131,23 @@ export default function DataPanel({ active }: DataPanelProps) {
 
       {/* 2. Sync belongs with the sources it synchronizes. In Dexie mode
           (GitHub Pages / PWA-only) there is no backend, so the controls are
-          replaced by a notice that the desktop app carries the feature -
-          visible, not hidden, per the feature-state policy (#335). */}
-      <SettingsCluster {...cluster("sync", "Sync", "Pair devices and keep data in step.")}>
+          replaced by a notice - visible, not hidden, per the feature-state
+          policy (#335). The notice says that sync is not available yet: it
+          used to point to the desktop app, which cannot sync either until
+          LAN mode lands (#3858). */}
+      <SettingsCluster
+        {...cluster("sync", "Sync", "Pairing devices and syncing data: in preparation.")}
+      >
         <Feature
           id={FEATURES.SYNC}
           whenDisabled={
             <SettingsSection
-              testid="settings-sync-desktop-only"
+              testid="settings-sync-not-available"
               title={t("settings.section_sync", "Sync")}
             >
               <div className="flex items-start gap-2 rounded-app border border-border bg-card px-3 py-2 text-sm text-fg-secondary">
-                <Monitor size={16} aria-hidden="true" className="mt-0.5 shrink-0" />
-                <span>
-                  {t("feature.desktop_only", "Only available with the desktop app.")}
-                </span>
+                <Hourglass size={16} aria-hidden="true" className="mt-0.5 shrink-0" />
+                <span>{t("sync.not_available_yet", "Sync is not available yet.")}</span>
               </div>
             </SettingsSection>
           }

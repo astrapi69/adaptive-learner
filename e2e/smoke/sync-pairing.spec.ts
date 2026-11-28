@@ -30,7 +30,7 @@ import {expect, test} from "@playwright/test";
 import {createTestUser} from "../helpers";
 
 test.describe("Sync pairing UI", () => {
-    test("desktop unpaired: host + port → Generate QR → QR panel renders", async ({
+    test("desktop unpaired: the pairing-code button is disabled with its reason", async ({
         page,
     }) => {
         await createTestUser(page, {name: "Sync Desktop E2E"});
@@ -43,24 +43,23 @@ test.describe("Sync pairing UI", () => {
             page.getByTestId("sync-desktop-unpaired"),
         ).toBeVisible();
 
-        // Generate the QR / pairing link from the default host
-        // + port (already pre-filled). No real network needed —
-        // the URL is just an encoded display.
-        await page.getByTestId("sync-host-input").fill("localhost");
-        await page.getByTestId("sync-port-input").fill("18001");
-        await page.getByTestId("sync-generate-button").click();
-
-        await expect(page.getByTestId("sync-qr-panel")).toBeVisible();
-        await expect(page.getByTestId("sync-qr-image")).toBeVisible();
-        await expect(page.getByTestId("sync-qr-link")).toBeVisible();
-        await expect(page.getByTestId("sync-copy-link")).toBeVisible();
+        // #3858: a pairing code is one no device can redeem until LAN
+        // mode lands (the view that redeems it is retired, see the case
+        // below). So the button is disabled and says why, and no QR
+        // panel can appear.
+        await expect(page.getByTestId("sync-generate-button")).toBeDisabled();
+        await expect(page.getByTestId("sync-pairing-unavailable")).toBeVisible();
+        await expect(page.getByTestId("sync-host-input")).toBeDisabled();
+        await expect(page.getByTestId("sync-port-input")).toBeDisabled();
+        await expect(page.getByTestId("sync-qr-panel")).toHaveCount(0);
     });
 
-    test("browser mode (mobile viewport): sync section shows the desktop-only notice", async ({
+    test("browser mode (mobile viewport): sync section shows the not-available-yet notice", async ({
         page,
     }) => {
         // SYNC-UI-GATE (#335): in Dexie/browser mode the sync feature is
-        // DISABLED with a desktop_only notice - the pairing UI this spec
+        // DISABLED with a notice (#3858: sync is not available yet; it no
+        // longer points to the desktop app) - the pairing UI this spec
         // used to assert was deliberately retired until Phase 1 LAN mode
         // lands, and must NOT reappear here (#2170: the old assertion
         // pinned removed behaviour). The section header stays visible so
@@ -71,7 +70,7 @@ test.describe("Sync pairing UI", () => {
         });
         await createTestUser(page, {name: "Sync Phone E2E"});
         await page.goto("/settings?tab=data");
-        await expect(page.getByTestId("settings-sync-desktop-only")).toBeVisible();
+        await expect(page.getByTestId("settings-sync-not-available")).toBeVisible();
         await expect(page.getByTestId("sync-phone-unpaired")).toHaveCount(0);
     });
 });

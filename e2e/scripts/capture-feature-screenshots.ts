@@ -1005,7 +1005,7 @@ async function gotoSyncDesktopOnlyNotice(page: Page): Promise<boolean> {
     await seedLearner(page);
     await page.goto("/settings?tab=data");
     await expect(page.getByTestId("settings")).toBeVisible({timeout: 20_000});
-    const notice = page.getByTestId("settings-sync-desktop-only");
+    const notice = page.getByTestId("settings-sync-not-available");
     if (!(await notice.count())) return false;
     await notice.scrollIntoViewIfNeeded();
     await expect(notice).toBeVisible({timeout: 10_000});

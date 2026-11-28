@@ -1237,7 +1237,8 @@ Bereichen des Daten-Tabs in der festen #1451-Reihenfolge.
       Bereich, dessen Überschrift oben im Bild steht; die Adresse ändert
       sich dabei NICHT
 - [ ] TC-0294 Beide Speichermodi (API + Dexie): Leiste und Deep-Link gleich; im
-      Dexie-Modus zeigt der Bereich "Synchronisation" den Desktop-Hinweis
+      Dexie-Modus zeigt der Bereich "Synchronisation" den Hinweis "Sync ist
+      noch nicht verfügbar."
 
 ### TS-0043 Lernen-Tab: Bereichsleiste + Deep-Link (#2961)
 
@@ -4315,6 +4316,19 @@ Netzwerk-Reiter offen.
       Konfliktdialog erscheint, beide Fassungen des Eintrags enthalten kein
       Feld `api_key_`, und "Intelligentes Zusammenführen (KI)" schickt dem
       KI-Anbieter keinen Schlüssel (Netzwerk-Reiter: Anfrage an den Anbieter)
+
+### TS-0141 Der Sync-Bereich sagt, was heute geht (#3858)
+
+- [ ] TC-1010 Desktop-App (Speichermodus Server), Einstellungen > Daten >
+      Synchronisation: die Beschreibung des Bereichs endet auf "in
+      Vorbereitung"; "Kopplungscode erzeugen" ist deaktiviert, darüber steht
+      der Grund ("Die Kopplung ist in Vorbereitung: Noch kann kein Gerät
+      einen Kopplungscode einlösen."), derselbe Text erscheint als Tooltip
+      des Knopfs; Host und Port lassen sich nicht ändern; es erscheint kein
+      QR-Code
+- [ ] TC-1011 Browser-Modus (GitHub Pages / Dexie), derselbe Bereich: die
+      Überschrift "Sync" bleibt sichtbar, darunter steht "Sync ist noch nicht
+      verfügbar."; kein Verweis auf die Desktop-App
 
 ## Automatisiert: Unit + Component Tests (Vitest, 7200+;
 ## aktuelle Zahl siehe docs/audits/current-coverage.md)

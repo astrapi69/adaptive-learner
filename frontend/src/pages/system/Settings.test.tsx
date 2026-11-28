@@ -207,10 +207,10 @@ describe("Settings page", () => {
     renderSettings("/settings?tab=data");
     await screen.findByTestId("settings");
     expect(screen.getByTestId("settings-sync")).toBeInTheDocument();
-    expect(screen.queryByTestId("settings-sync-desktop-only")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("settings-sync-not-available")).not.toBeInTheDocument();
   });
 
-  it("replaces the Sync controls with a desktop-only notice in Dexie mode", async () => {
+  it("replaces the Sync controls with a not-available-yet notice in Dexie mode (#3858)", async () => {
     storageState.mode = "dexie";
     apiGet.mockResolvedValue(BASE);
     renderSettings("/settings?tab=data");
@@ -219,11 +219,13 @@ describe("Settings page", () => {
     expect(screen.getByTestId("settings-panel-data")).toBeVisible();
     expect(screen.getByTestId("settings-backup")).toBeInTheDocument();
     // ...the Sync controls are gone, but the section header stays
-    // visible with the desktop-only notice (#335: disabled, not hidden).
+    // visible with the notice (#335: disabled, not hidden). The notice no
+    // longer points to the desktop app, which cannot sync either (#3858).
     expect(screen.queryByTestId("settings-sync")).not.toBeInTheDocument();
-    const notice = screen.getByTestId("settings-sync-desktop-only");
+    const notice = screen.getByTestId("settings-sync-not-available");
     expect(notice).toBeVisible();
     expect(notice).toHaveTextContent("Sync");
+    expect(notice).not.toHaveTextContent(/desktop app|Desktop-App/i);
   });
 
   // #1451 — the Data tab sections follow a FIXED causal order:
