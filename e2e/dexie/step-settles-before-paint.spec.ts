@@ -42,13 +42,53 @@ test.describe("#3752 - a step is painted at its final position", () => {
 
     test("lesson page: theory to the first exercise, and exercise to exercise", async ({page}) => {
         await openLesson(page, "exam");
-        // The set line in the header arrives once, asynchronously, after the
-        // lesson opens (listSets); it is not a step change. Measure the step
-        // change only.
-        await expect(page.getByTestId("lesson-header-set")).toBeVisible({timeout: 10_000});
         expectAtRest(await sampleNextStepMotion(page), "t1 -> e1");
         await tapOption(page, "Paris", null);
         expectAtRest(await sampleNextStepMotion(page), "e1 -> e2");
+    });
+
+    test("opening a lesson: the first step stays where it was painted when the set line arrives late (#3772)", async ({page}) => {
+        await openLesson(page, "exam");
+        // The set line needs the set listing, which fetches the manifest of
+        // every source. Hold that answer back, as a slow connection does.
+        await page.route("**/raw.githubusercontent.com/**/main/manifest.yaml", async (route) => {
+            await new Promise((resolve) => setTimeout(resolve, 900));
+            await route.fallback();
+        });
+        // Sample from the first frame of the reloaded page: the top of the
+        // first step, and whether the set line is there yet.
+        await page.addInitScript(() => {
+            const samples: {top: number; setLine: boolean}[] = [];
+            (window as unknown as {__openSamples: typeof samples}).__openSamples = samples;
+            const STEP = '[data-testid^="lesson-step-"]:not([data-testid$="-anchor"])';
+            const frame = () => {
+                const step = document.querySelector(STEP);
+                if (step) {
+                    samples.push({
+                        top: Math.round(step.getBoundingClientRect().top),
+                        setLine: document.querySelector('[data-testid="lesson-header-set"]') !== null,
+                    });
+                }
+                requestAnimationFrame(frame);
+            };
+            requestAnimationFrame(frame);
+        });
+        await page.reload();
+        await expect(page.getByTestId("lesson-header-set")).toBeVisible({timeout: 15_000});
+        // A few frames after the line has arrived, then read.
+        await page.waitForTimeout(300);
+        const samples = await page.evaluate(
+            () => (window as unknown as {__openSamples: {top: number; setLine: boolean}[]}).__openSamples,
+        );
+
+        const before = samples.filter((sample) => !sample.setLine);
+        const after = samples.filter((sample) => sample.setLine);
+        // The step was on screen before the line came, or the test measured nothing.
+        expect(before.length, "frames with the step painted and no set line yet").toBeGreaterThanOrEqual(5);
+        expect(after.length, "frames after the set line arrived").toBeGreaterThanOrEqual(3);
+        const tops = samples.map((sample) => sample.top);
+        const spread = Math.max(...tops) - Math.min(...tops);
+        expect(spread, `top of the first step per frame: ${[...new Set(tops)].join(", ")}`).toBeLessThanOrEqual(1);
     });
 
     test("runner shell (error replay): Schweden to Norwegen", async ({page}) => {

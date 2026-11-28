@@ -299,6 +299,7 @@ export default function LessonPage() {
     prevLessonFilename,
     position,
     setTitle,
+    setTitlePending,
     setDomain,
     setBook,
     setEvaluation,
@@ -365,6 +366,7 @@ export default function LessonPage() {
         <LessonHeader
           lesson={lesson}
           setTitle={setTitle}
+          setTitlePending={setTitlePending}
           position={position}
           prevHref={prevLessonHref}
           nextHref={nextLessonHref}
