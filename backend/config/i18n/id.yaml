@@ -902,8 +902,6 @@ settings:
   voice:
     tts_enabled: Tampilkan tombol ucapan
     tts_enabled_help: Membacakan respons AI dengan keras saat Anda mengklik ikon pengeras suara.
-    auto_play: Putar otomatis respons AI
-    auto_play_help: Ucapkan setiap respons AI secara otomatis (bawaan nonaktif).
     tts_voice: Suara
     tts_voice_help: Bawaan menggunakan kecocokan terdekat untuk bahasa proyek Anda.
     voice_default: Bawaan (pilih otomatis)

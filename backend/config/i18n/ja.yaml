@@ -896,8 +896,6 @@ settings:
   voice:
     tts_enabled: 音声ボタンを表示
     tts_enabled_help: スピーカーアイコンをクリックするとAI応答を読み上げます。
-    auto_play: AI応答を自動再生
-    auto_play_help: 各AI応答を自動的に読み上げます（デフォルトはオフ）。
     tts_voice: 音声
     tts_voice_help: デフォルトはプロジェクトの言語に最も近い音声。
     voice_default: デフォルト（自動）

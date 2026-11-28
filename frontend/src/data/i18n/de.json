@@ -938,8 +938,6 @@
     "voice": {
       "tts_enabled": "Sprechschaltflächen anzeigen",
       "tts_enabled_help": "Liest KI-Antworten vor, wenn du auf das Lautsprecher-Symbol klickst.",
-      "auto_play": "KI-Antworten automatisch vorlesen",
-      "auto_play_help": "Spricht jede KI-Antwort automatisch (Standard aus).",
       "tts_voice": "Stimme",
       "tts_voice_help": "Standard wählt die beste Übereinstimmung für deine Projektsprache.",
       "voice_default": "Standard (auto)",

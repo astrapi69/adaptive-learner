@@ -938,8 +938,6 @@
     "voice": {
       "tts_enabled": "Mostrar botões de voz",
       "tts_enabled_help": "Lê respostas da IA em voz alta.",
-      "auto_play": "Reproduzir respostas da IA automaticamente",
-      "auto_play_help": "Fala cada resposta automaticamente (padrão: desativado).",
       "tts_voice": "Voz",
       "tts_voice_help": "Padrão: melhor correspondência com seu idioma.",
       "voice_default": "Padrão (auto)",

@@ -938,8 +938,6 @@
     "voice": {
       "tts_enabled": "Show speech buttons",
       "tts_enabled_help": "Reads AI responses aloud when you click the speaker icon.",
-      "auto_play": "Auto-play AI responses",
-      "auto_play_help": "Speak each AI response automatically (default off).",
       "tts_voice": "Voice",
       "tts_voice_help": "Default uses the closest match for your project language.",
       "voice_default": "Default (auto-pick)",

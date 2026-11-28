@@ -946,8 +946,6 @@
     "voice": {
       "tts_enabled": "말하기 버튼 표시",
       "tts_enabled_help": "스피커 아이콘을 클릭하면 AI 응답을 소리 내어 읽습니다.",
-      "auto_play": "AI 응답 자동 재생",
-      "auto_play_help": "각 AI 응답을 자동으로 소리 내어 읽습니다 (기본값은 꺼짐).",
       "tts_voice": "음성",
       "tts_voice_help": "기본값은 프로젝트 언어에 가장 가까운 음성을 사용합니다.",
       "voice_default": "기본값 (자동 선택)",

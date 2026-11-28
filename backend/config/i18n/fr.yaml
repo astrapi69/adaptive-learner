@@ -896,8 +896,6 @@ settings:
   voice:
     tts_enabled: Afficher les boutons de lecture
     tts_enabled_help: Lit les réponses IA à voix haute.
-    auto_play: Lire automatiquement les réponses IA
-    auto_play_help: Lit chaque réponse automatiquement (désactivé par défaut).
     tts_voice: Voix
     tts_voice_help: 'Par défaut : meilleure correspondance avec ta langue.'
     voice_default: Défaut (auto)

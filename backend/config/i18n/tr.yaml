@@ -896,8 +896,6 @@ settings:
   voice:
     tts_enabled: Konuşma düğmelerini göster
     tts_enabled_help: YZ yanıtlarını sesli okur.
-    auto_play: YZ yanıtlarını otomatik oynat
-    auto_play_help: Her yanıtı otomatik okur (varsayılan kapalı).
     tts_voice: Konuşma sesi
     tts_voice_help: 'Varsayılan: projenin diline en yakın eşleşme.'
     voice_default: Varsayılan (oto)
