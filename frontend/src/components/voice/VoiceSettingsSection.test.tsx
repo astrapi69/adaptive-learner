@@ -98,6 +98,20 @@ describe("VoiceSettingsSection visibility", () => {
     });
 });
 
+describe("VoiceSettingsSection offers only what the app does (#3872)", () => {
+    it("has no switch for reading AI answers aloud: no code ever did that", () => {
+        mountTtsOnly();
+        render(
+            <I18nProvider>
+                <VoiceSettingsSection />
+            </I18nProvider>,
+        );
+
+        expect(screen.getByTestId("settings-tts-enabled")).toBeTruthy();
+        expect(screen.queryByTestId("settings-auto-play")).toBeNull();
+    });
+});
+
 describe("VoiceSettingsSection toggles persist", () => {
     it("flipping TTS toggle writes localStorage", () => {
         mountTtsOnly();
