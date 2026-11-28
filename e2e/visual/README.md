@@ -12,6 +12,21 @@ each, not the full Cartesian product):
 |------|--------|-------|
 | `theme-regression.spec.ts` (#244, Phase 2) | 5 views × 12 themes, desktop 1440×900 | 60 |
 | `critical-surfaces.spec.ts` (#705, Phase 1) | 20 surfaces × 3 viewports, default (light) theme | up to 60 |
+| `touch-surfaces.spec.ts` (#3783) | the surfaces that render differently on a phone × 2 touch projects (Android, iPhone profile) | 6 |
+
+### Touch devices (#3783)
+
+The two matrices above run on one desktop Chrome. Their "mobile" size is a
+narrow desktop: Windows user agent, fine pointer, no touch. Two more
+projects in `playwright.visual.config.ts`, `touch-android` (Pixel 7) and
+`touch-ios` (iPhone 14 profile on Chromium), run `touch-surfaces.spec.ts`
+only, on the surfaces whose rendering depends on the device: the dashboard
+with the platform's install surface, Settings > Learning (gesture default,
+16 px floor of form fields) and Settings > General (install section).
+
+A new surface behind a device, pointer or display-mode branch gets a case
+there. What no emulation shows stays with the manual device check: a real
+install, the safe area of real hardware, the standalone window.
 
 ### Phase 2 — themes (#244)
 
@@ -74,6 +89,7 @@ already applied in `helpers.ts`:
 
 - `theme-regression.spec.ts` — the 12 themes × 5 views matrix.
 - `critical-surfaces.spec.ts` — the 20 surfaces × 3 viewports matrix.
+- `touch-surfaces.spec.ts` — the device-dependent surfaces in the two touch projects.
 - `helpers.ts` — `setTheme` (pins the theme before first paint via the
   real `adaptive-learner.theme` localStorage key), `freezeClock`,
   `settleForScreenshot`, and per-view/per-surface seeding (`gotoView`,
