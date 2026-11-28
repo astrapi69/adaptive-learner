@@ -444,3 +444,15 @@ issues:
     detail: "Point 2 waited for learn-content-engine#254, which is closed, so the cloze conversion can be rebuilt without retirement."
     evidence: https://github.com/astrapi69/adaptive-learner-content/issues/222#issuecomment-6098055490
     checked: 2026-10-29
+  adaptive-learner#4003:
+    summary: "STATUS.md renders the open PR count, which changes without issue movement"
+    waits: nothing
+    detail: "Owner direction: stop rendering the count, the check stays strict; keeping it with a timestamp is the open fallback in the issue."
+    evidence: https://github.com/astrapi69/adaptive-learner/issues/4003
+    checked: 2026-11-28
+  adaptive-learner#4004:
+    summary: "the findings annotations stop at 10 per step without saying so"
+    waits: nothing
+    detail: "The fix (one total line with a pointer to the report issue before the findings) is written in the issue."
+    evidence: https://github.com/astrapi69/adaptive-learner/issues/4004
+    checked: 2026-11-28
