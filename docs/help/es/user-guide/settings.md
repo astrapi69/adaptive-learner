@@ -223,9 +223,6 @@ contiene la tarjeta **Voz**:
 - **Mostrar botones de voz** - añade un botón de altavoz junto a las
   respuestas de la IA y los resultados de la Evaluación que los lee en
   voz alta.
-- **Reproducir respuestas IA automáticamente** - lee cada respuesta de
-  la IA automáticamente (predeterminado DESACTIVADO: el audio sorpresa
-  raramente es lo que quieres).
 - **Voz** - la voz con la que se lee. El valor predeterminado da
   preferencia, para el idioma de tu proyecto, a una voz que se ejecuta
   localmente en tu dispositivo; con él, una voz en línea solo lee cuando

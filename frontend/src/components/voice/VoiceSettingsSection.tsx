@@ -1,13 +1,12 @@
 /**
  * Settings > Voice section (Phase 31D / v1.18.0).
  *
- * Six controls:
+ * The controls:
  *   - TTS enabled (localStorage)
  *   - TTS voice (dropdown of available browser voices, "Default" = empty)
  *   - TTS rate (slider 0.5..2.0)
  *   - TTS pitch (slider 0.5..2.0)
  *   - STT enabled (localStorage)
- *   - Auto-play AI responses (localStorage, default off)
  *   - STT language override (text input)
  *   - Pronunciation enabled (localStorage; per-spec defaults true,
  *     and the page hides itself anyway when the project has no
@@ -32,7 +31,6 @@ import {
 } from "../../lib/voice/speech-synthesis";
 import {
     readVoicePrefs,
-    writeAutoPlayAi,
     writePronunciationEnabled,
     writeSttEnabled,
     writeSttLangOverride,
@@ -100,33 +98,6 @@ export default function VoiceSettingsSection() {
                                 setLocal({ttsEnabled: e.target.checked});
                             }}
                             data-testid="settings-tts-enabled"
-                        />
-                    </label>
-
-                    <label className="flex items-center justify-between gap-2">
-                        <span className="flex flex-col gap-0.5">
-                            <span className="text-[0.95rem] font-medium">
-                                {t(
-                                    "settings.voice.auto_play",
-                                    "Auto-play AI responses",
-                                )}
-                            </span>
-                            <FormHint as="span">
-                                {t(
-                                    "settings.voice.auto_play_help",
-                                    "Speak each AI response automatically (default off).",
-                                )}
-                            </FormHint>
-                        </span>
-                        <input
-                            type="checkbox"
-                            className="m-0 size-4 flex-none p-0"
-                            checked={prefs.autoPlayAi}
-                            onChange={(e) => {
-                                writeAutoPlayAi(e.target.checked);
-                                setLocal({autoPlayAi: e.target.checked});
-                            }}
-                            data-testid="settings-auto-play"
                         />
                     </label>
 

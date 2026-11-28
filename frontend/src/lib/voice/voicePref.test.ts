@@ -8,7 +8,6 @@ import {
     readVoicePrefs,
     VOICE_PREF_BLOCK_KEY,
     VOICE_PREF_KEYS,
-    writeAutoPlayAi,
     writeLessonAutoRead,
     writeLessonSpeed,
     writePronunciationEnabled,
@@ -39,8 +38,20 @@ describe("readVoicePrefs defaults", () => {
         expect(readVoicePrefs().sttEnabled).toBe(true);
     });
 
-    it("autoPlayAi defaults to false (no surprise sound)", () => {
-        expect(readVoicePrefs().autoPlayAi).toBe(false);
+    it("carries no auto-play preference: nothing ever read it (#3872)", () => {
+        expect(readVoicePrefs()).not.toHaveProperty("autoPlayAi");
+    });
+
+    it("drops an auto-play value an older version stored in the block (#3872)", () => {
+        localStorage.setItem(
+            VOICE_PREF_BLOCK_KEY,
+            JSON.stringify({autoPlayAi: true, ttsRate: 1.5}),
+        );
+
+        const prefs = readVoicePrefs();
+
+        expect(prefs).not.toHaveProperty("autoPlayAi");
+        expect(prefs.ttsRate).toBe(1.5);
     });
 
     it("ttsRate + ttsPitch default to 1.0", () => {
@@ -82,11 +93,6 @@ describe("setters persist into the consolidated block + clamp", () => {
     it("writeSttEnabled persists boolean", () => {
         writeSttEnabled(false);
         expect(readVoicePrefs().sttEnabled).toBe(false);
-    });
-
-    it("writeAutoPlayAi persists boolean", () => {
-        writeAutoPlayAi(true);
-        expect(readVoicePrefs().autoPlayAi).toBe(true);
     });
 
     it("writeTtsRate clamps to [0.5, 2.0]", () => {
@@ -183,7 +189,6 @@ describe("legacy-key migration (#893, no silent data loss)", () => {
         expect(p).toEqual({
             ttsEnabled: false,
             sttEnabled: false,
-            autoPlayAi: true,
             ttsRate: 1.5,
             ttsPitch: 0.75,
             ttsVoiceName: "Alice EN-US",
@@ -198,6 +203,15 @@ describe("legacy-key migration (#893, no silent data loss)", () => {
         for (const key of Object.values(VOICE_PREF_KEYS)) {
             expect(localStorage.getItem(key)).toBeNull();
         }
+    });
+
+    it("removes a legacy auto-play key that is the only one left (#3872)", () => {
+        localStorage.setItem(VOICE_PREF_KEYS.autoPlay, "true");
+
+        const prefs = readVoicePrefs();
+
+        expect(prefs).not.toHaveProperty("autoPlayAi");
+        expect(localStorage.getItem(VOICE_PREF_KEYS.autoPlay)).toBeNull();
     });
 
     it("is idempotent: a second read does not change the block destructively", () => {
@@ -218,7 +232,6 @@ describe("legacy-key migration (#893, no silent data loss)", () => {
         expect(p).toEqual({
             ttsEnabled: true,
             sttEnabled: true,
-            autoPlayAi: false,
             ttsRate: 1.0,
             ttsPitch: 1.0,
             ttsVoiceName: "",

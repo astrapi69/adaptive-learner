@@ -210,9 +210,6 @@ içerir:
 - **Konuşma düğmelerini göster** - yapay zeka yanıtlarının ve
   Değerlendirme sonuçlarının yanına onları yüksek sesle okuyan bir
   hoparlör düğmesi ekler.
-- **YZ yanıtlarını otomatik oynat** - her yapay zeka yanıtını
-  otomatik olarak seslendirir (varsayılan KAPALI - sürpriz ses nadiren
-  istenen şeydir).
 - **Konuşma sesi** - okumada kullanılan ses. Varsayılan, proje dilin
   için cihazında yerel olarak çalışan bir sesi tercih eder; varsayılan
   ayarda çevrimiçi bir ses yalnızca şu durumlarda okur: cihazında bu dil
