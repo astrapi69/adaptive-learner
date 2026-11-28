@@ -14,6 +14,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import ShareWizard from "./ShareWizard";
 import { CEFR_LEVELS } from "../../../lib/content/language/language-options";
+import { lessonJson } from "../../../lib/content/lesson/lesson-export";
 import type { ContentLesson, ContentSetEntry } from "../../../storage/types";
 
 // App language is mutable per test (default "de") so the
@@ -78,6 +79,17 @@ function lesson(id: string, fronts: string[]): ContentLesson {
 
 /** A single lesson whose JSON exceeds the create-file URL cap (a big
  *  theory body) but is otherwise shareable (1 card + 1 exercise). */
+/** The JSON of the lesson the wizard handed to the download: since #3839
+ *  the lesson is never in the opened address, the downloaded file is what
+ *  the learner pastes on GitHub. */
+function shippedLessonJson(
+  downloadLesson: (lesson: ContentLesson, filename: string) => void,
+): string {
+  const download = vi.mocked(downloadLesson);
+  expect(download).toHaveBeenCalledTimes(1);
+  return lessonJson(download.mock.calls[0][0]);
+}
+
 function oversizedLesson(): ContentLesson {
   return {
     id: "big",
@@ -354,7 +366,7 @@ describe("ShareWizard: share + celebration (step 4)", () => {
 
 describe("ShareWizard: author credit (64C-2)", () => {
   it("stamps the credit onto the shared lesson and remembers the name", async () => {
-    const { openUrl } = renderWizard();
+    const { downloadLesson } = renderWizard();
     // Enter a name in step 1; the show-name toggle auto-checks.
     fireEvent.change(screen.getByTestId("share-wizard-author-name"), {
       target: { value: "Maria S." },
@@ -367,8 +379,7 @@ describe("ShareWizard: author credit (64C-2)", () => {
     fireEvent.click(screen.getByTestId("share-wizard-next"));
     fireEvent.click(screen.getByTestId("share-wizard-share"));
 
-    const url = openUrl.mock.calls[0][0] as string;
-    const value = new URL(url).searchParams.get("value") ?? "";
+    const value = shippedLessonJson(downloadLesson);
     expect(value).toContain("contributed_by");
     expect(value).toContain("Maria S.");
     // Name remembered for next time.
@@ -378,14 +389,13 @@ describe("ShareWizard: author credit (64C-2)", () => {
   });
 
   it("omits the credit when no name is entered", async () => {
-    const { openUrl } = renderWizard();
+    const { downloadLesson } = renderWizard();
     fireEvent.click(screen.getByTestId("share-wizard-next"));
     await screen.findByTestId("share-wizard-step-2");
     fireEvent.click(screen.getByTestId("share-wizard-next"));
     fireEvent.click(screen.getByTestId("share-wizard-next"));
     fireEvent.click(screen.getByTestId("share-wizard-share"));
-    const url = openUrl.mock.calls[0][0] as string;
-    const value = new URL(url).searchParams.get("value") ?? "";
+    const value = shippedLessonJson(downloadLesson);
     expect(value).not.toContain("contributed_by");
   });
 });
@@ -415,20 +425,19 @@ describe("ShareWizard: carried foreign credit disclosure + removal (#2656)", () 
 
   it("the foreign credit travels with the share by default (silent-travel gap closed by disclosure, not by dropping it)", async () => {
     const foreignLesson = { ...lesson("mine", ["word0"]), contributed_by: "Jane Doe" };
-    const { openUrl } = renderWizard({ lessons: [foreignLesson] });
+    const { downloadLesson } = renderWizard({ lessons: [foreignLesson] });
     fireEvent.click(screen.getByTestId("share-wizard-next"));
     await screen.findByTestId("share-wizard-step-2");
     fireEvent.click(screen.getByTestId("share-wizard-next"));
     fireEvent.click(screen.getByTestId("share-wizard-next"));
     fireEvent.click(screen.getByTestId("share-wizard-share"));
-    const url = openUrl.mock.calls[0][0] as string;
-    const value = new URL(url).searchParams.get("value") ?? "";
+    const value = shippedLessonJson(downloadLesson);
     expect(value).toContain("Jane Doe");
   });
 
   it("one-click 'Remove credits' strips the name from the outgoing share payload", async () => {
     const foreignLesson = { ...lesson("mine", ["word0"]), contributed_by: "Jane Doe" };
-    const { openUrl } = renderWizard({ lessons: [foreignLesson] });
+    const { downloadLesson } = renderWizard({ lessons: [foreignLesson] });
     fireEvent.click(screen.getByTestId("share-wizard-foreign-credit-remove"));
     expect(
       screen.getByTestId("share-wizard-foreign-credit-removed"),
@@ -442,15 +451,14 @@ describe("ShareWizard: carried foreign credit disclosure + removal (#2656)", () 
     fireEvent.click(screen.getByTestId("share-wizard-next"));
     fireEvent.click(screen.getByTestId("share-wizard-next"));
     fireEvent.click(screen.getByTestId("share-wizard-share"));
-    const url = openUrl.mock.calls[0][0] as string;
-    const value = new URL(url).searchParams.get("value") ?? "";
+    const value = shippedLessonJson(downloadLesson);
     expect(value).not.toContain("Jane Doe");
     expect(JSON.parse(value).contributed_by).toBeNull();
   });
 
   it("the learner's own opted-in name still wins over a removed foreign credit", async () => {
     const foreignLesson = { ...lesson("mine", ["word0"]), contributed_by: "Jane Doe" };
-    const { openUrl } = renderWizard({ lessons: [foreignLesson] });
+    const { downloadLesson } = renderWizard({ lessons: [foreignLesson] });
     fireEvent.change(screen.getByTestId("share-wizard-author-name"), {
       target: { value: "Maria S." },
     });
@@ -459,8 +467,7 @@ describe("ShareWizard: carried foreign credit disclosure + removal (#2656)", () 
     fireEvent.click(screen.getByTestId("share-wizard-next"));
     fireEvent.click(screen.getByTestId("share-wizard-next"));
     fireEvent.click(screen.getByTestId("share-wizard-share"));
-    const url = openUrl.mock.calls[0][0] as string;
-    const value = new URL(url).searchParams.get("value") ?? "";
+    const value = shippedLessonJson(downloadLesson);
     expect(value).toContain("Maria S.");
     expect(value).not.toContain("Jane Doe");
   });
