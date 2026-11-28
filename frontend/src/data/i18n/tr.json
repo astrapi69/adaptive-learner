@@ -938,8 +938,6 @@
     "voice": {
       "tts_enabled": "Konuşma düğmelerini göster",
       "tts_enabled_help": "YZ yanıtlarını sesli okur.",
-      "auto_play": "YZ yanıtlarını otomatik oynat",
-      "auto_play_help": "Her yanıtı otomatik okur (varsayılan kapalı).",
       "tts_voice": "Konuşma sesi",
       "tts_voice_help": "Varsayılan: projenin diline en yakın eşleşme.",
       "voice_default": "Varsayılan (oto)",
@@ -3271,7 +3269,6 @@
       "ready_to_share": "Her şey hazır. Dersini pull request olarak paylaş?",
       "share_button": "Paylaş",
       "thanks": "Paylaştığınız için teşekkürler! Katkınız diğer öğrenenlere yardımcı oluyor.",
-      "submitted": "GitHub'da dersinizin önceden doldurulduğu bir pull request açıldı. İnceleyin ve \"Create pull request\" düğmesine tıklayın - içerik deposunun CI'si otomatik olarak doğrular.",
       "view_submission": "Pull request'i GitHub'da aç",
       "view_upload": "GitHub yükleme sayfasını aç",
       "popup_blocked": "Tarayıcın GitHub sekmesini engelledi. Manuel olarak açmak için aşağıdaki bağlantıya tıkla.",

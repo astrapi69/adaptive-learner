@@ -946,8 +946,6 @@
     "voice": {
       "tts_enabled": "말하기 버튼 표시",
       "tts_enabled_help": "스피커 아이콘을 클릭하면 AI 응답을 소리 내어 읽습니다.",
-      "auto_play": "AI 응답 자동 재생",
-      "auto_play_help": "각 AI 응답을 자동으로 소리 내어 읽습니다 (기본값은 꺼짐).",
       "tts_voice": "음성",
       "tts_voice_help": "기본값은 프로젝트 언어에 가장 가까운 음성을 사용합니다.",
       "voice_default": "기본값 (자동 선택)",
@@ -3271,7 +3269,6 @@
       "ready_to_share": "모든 준비가 끝났습니다. 레슨을 풀 리퀘스트로 공유할까요?",
       "share_button": "공유",
       "thanks": "공유해 주셔서 감사합니다! 당신의 기여가 다른 학습자에게 도움이 됩니다.",
-      "submitted": "당신의 레슨이 미리 채워진 풀 리퀘스트가 GitHub에 열렸습니다. 검토한 후 \"Create pull request\"를 클릭하세요 - content-repo CI가 자동으로 검증합니다.",
       "view_submission": "GitHub에서 풀 리퀘스트 열기",
       "view_upload": "GitHub 업로드 페이지 열기",
       "popup_blocked": "브라우저가 GitHub 탭을 차단했습니다. 아래 링크를 클릭하여 수동으로 여세요.",

@@ -896,8 +896,6 @@ settings:
   voice:
     tts_enabled: 音声ボタンを表示
     tts_enabled_help: スピーカーアイコンをクリックするとAI応答を読み上げます。
-    auto_play: AI応答を自動再生
-    auto_play_help: 各AI応答を自動的に読み上げます（デフォルトはオフ）。
     tts_voice: 音声
     tts_voice_help: デフォルトはプロジェクトの言語に最も近い音声。
     voice_default: デフォルト（自動）
@@ -3027,7 +3025,6 @@ content:
     ready_to_share: "準備完了。レッスンをプルリクエストとして共有しますか？"
     share_button: 共有する
     thanks: 共有していただきありがとうございます! あなたの貢献は他の学習者の助けになります。
-    submitted: "GitHub にレッスンが入力済みのプルリクエストが開きました。確認して「Create pull request」をクリックしてください。コンテンツリポジトリの CI が自動で検証します。"
     view_submission: "GitHub でプルリクエストを開く"
     view_upload: "GitHub のアップロードページを開く"
     popup_blocked: "ブラウザが GitHub のタブをブロックしました。下のリンクをクリックして手動で開いてください。"
