@@ -95,11 +95,11 @@ için gereklidir:
     - **Token olmadan** - tek bir ders için uygulama, GitHub'ın dosya
       düzenleyicisini doğru yolda açar; PR başlığı ve açıklaması önceden
       doldurulmuştur. Yol, başlık ve açıklama, uygulamanın düzenleyiciyi
-      açmak için kullandığı adreste yer alır, küçük bir derste dersin
-      içeriği de; GitHub bunların hepsini düzenleyici açılırken, daha
-      siz bir şey onaylamadan alır. Daha büyük bir
-      derste uygulama dosyayı önce indirir ve siz onun içeriğini
-      düzenleyiciye yapıştırırsınız. Birden çok dersli bir sette
+      açmak için kullandığı adreste yer alır; GitHub bunları düzenleyici
+      açılırken, daha siz bir şey onaylamadan alır. Dersin içeriği bu
+      adreste yer almaz: uygulama dosyayı indirir ve siz onun içeriğini
+      düzenleyiciye yapıştırırsınız; böylece içerik GitHub'a ancak siz
+      orada onayladığınızda ulaşır. Birden çok dersli bir sette
       uygulama dosyaları indirir ve GitHub'ın yükleme sayfasını açar;
       dosyaları oraya siz sürüklersiniz. Bütün bu durumlarda GitHub,
       fork'u ve pull request'i ancak siz GitHub'da onayladığınızda

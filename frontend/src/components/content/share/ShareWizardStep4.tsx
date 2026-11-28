@@ -17,7 +17,6 @@ export default function ShareWizardStep4({ wiz }: { wiz: UseShareWizardResult })
     sharedUrl,
     automated,
     shareMethod,
-    prefilled,
     copyPrBody,
     copied,
     prBody,
@@ -45,17 +44,13 @@ export default function ShareWizardStep4({ wiz }: { wiz: UseShareWizardResult })
             <p data-testid="share-wizard-pr-created">
               {t("share.pr.success", "Pull request created! Your lesson was committed and a pull request opened on GitHub - the content-repo CI validates it automatically.")}
             </p>
-          ) : shareMethod === "pr" && prefilled ? (
-            <p data-testid="share-wizard-pr-instructions">
-              {t("content.wizard.submitted", "A pull request was opened on GitHub with your lesson pre-filled. Review it and click \"Create pull request\" - the content-repo CI validates it automatically.")}
-            </p>
           ) : (
             <>
               {shareMethod === "pr" ? (
-                // Large single lesson: the create-file editor opened
-                // at the right path with the title/description filled
-                // in, but the JSON was too big to pre-fill — the user
-                // pastes the downloaded file's contents.
+                // Single lesson: the create-file editor opened at the
+                // right path with the title/description filled in. The
+                // content is never pre-filled (#3839) — the user pastes
+                // the downloaded file's contents.
                 <p data-testid="share-wizard-paste-instructions">
                   {t("content.wizard.paste_instructions", "Your lesson file was downloaded and GitHub's new-file editor opened at the right path. Open the downloaded file, paste its contents into the editor, then click \"Propose new file\" - the title and description are already filled in.")}
                 </p>

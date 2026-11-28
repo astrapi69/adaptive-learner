@@ -223,9 +223,6 @@ cartão **Voz**:
 - **Mostrar botões de voz** - adiciona um botão de altifalante ao lado
   das respostas da IA e dos resultados da Avaliação que os lê em voz
   alta.
-- **Reproduzir respostas da IA automaticamente** - fala cada resposta da
-  IA automaticamente (padrão DESLIGADO - áudio surpresa raramente é o
-  que quer).
 - **Voz** - a voz de leitura. O padrão dá preferência, para o idioma do
   seu projeto, a uma voz que é executada localmente no seu dispositivo;
   com o padrão, uma voz online só lê quando o dispositivo não tem
