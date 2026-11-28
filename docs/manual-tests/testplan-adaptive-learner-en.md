@@ -4047,15 +4047,15 @@ keep the developer tools open on the Network tab.
       field, and "Smart Merge (AI)" sends the AI provider no key (Network
       tab: the request to the provider)
 
-### TS-0141 The Sync area says what works today (#3858)
+### TS-0142 The Sync area says what works today (#3858)
 
-- [ ] TC-1010 Desktop app (storage mode Server), Settings > Data > Sync: the
+- [ ] TC-1012 Desktop app (storage mode Server), Settings > Data > Sync: the
       description of the area ends with "in preparation"; "Generate pairing
       code" is disabled, above it stands the reason ("Pairing is in
       preparation: no device can redeem a pairing code yet."), the same text
       shows as the tooltip of the button; host and port cannot be changed; no
       QR code appears
-- [ ] TC-1011 Browser mode (GitHub Pages / Dexie), the same area: the heading
+- [ ] TC-1013 Browser mode (GitHub Pages / Dexie), the same area: the heading
       "Sync" stays visible, below it reads "Sync is not available yet."; no
       pointer to the desktop app
 

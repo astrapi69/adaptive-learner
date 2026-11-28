@@ -4330,16 +4330,16 @@ Netzwerk-Reiter offen.
       Feld `api_key_`, und "Intelligentes Zusammenführen (KI)" schickt dem
       KI-Anbieter keinen Schlüssel (Netzwerk-Reiter: Anfrage an den Anbieter)
 
-### TS-0141 Der Sync-Bereich sagt, was heute geht (#3858)
+### TS-0142 Der Sync-Bereich sagt, was heute geht (#3858)
 
-- [ ] TC-1010 Desktop-App (Speichermodus Server), Einstellungen > Daten >
+- [ ] TC-1012 Desktop-App (Speichermodus Server), Einstellungen > Daten >
       Synchronisation: die Beschreibung des Bereichs endet auf "in
       Vorbereitung"; "Kopplungscode erzeugen" ist deaktiviert, darüber steht
       der Grund ("Die Kopplung ist in Vorbereitung: Noch kann kein Gerät
       einen Kopplungscode einlösen."), derselbe Text erscheint als Tooltip
       des Knopfs; Host und Port lassen sich nicht ändern; es erscheint kein
       QR-Code
-- [ ] TC-1011 Browser-Modus (GitHub Pages / Dexie), derselbe Bereich: die
+- [ ] TC-1013 Browser-Modus (GitHub Pages / Dexie), derselbe Bereich: die
       Überschrift "Sync" bleibt sichtbar, darunter steht "Sync ist noch nicht
       verfügbar."; kein Verweis auf die Desktop-App
 
