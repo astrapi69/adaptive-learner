@@ -81,6 +81,34 @@ başlatılmadıysa tamamlanmış olarak kalır. Devam eden iki dersten
 daha ileri gitmiş olan korunur. İki tarafın denemeleri, en iyi
 sonucu ve deneme geçmişi korunur.
 
+### Birleştir veya sıfırla
+
+Dosyayı seçtikten sonra uygulama yedeğin nasıl uygulanacağını sorar:
+
+- **Birleştir** önceden seçilidir. Bu cihazda eksik olanı ekler ve hiçbir
+  şeyi silmez. Yedekten sonra sildiğin şey geri gelir.
+- **Yedeğe sıfırla** bu cihazı tam olarak yedekteki duruma getirir:
+  ilerlemen, kendi derslerin ve indirdiğin setler. Yedekten beri eklenen
+  veya değiştirilen her şey kaldırılır ve geri getirilemez. Herhangi bir
+  şey olmadan önce bir iletişim kutusu onay ister.
+
+Sıfırlama şunlara dokunmaz: yapay zeka anahtarların, bu cihazdaki diğer
+öğrenme profilleri ve tüm profillerin paylaştığı listeler (konular, rozet
+kataloğu).
+
+Setleri bir cihazdaki tüm profiller paylaşır; bu yüzden sıfırlama onları
+her profil için değiştirir.
+
+Sıfırlama ya tamamen yapılır ya da hiç yapılmaz. Yedek tümüyle
+uygulanamıyorsa hiçbir şey değiştirilmez ve uygulama bunu söyler.
+
+Başka bir profile ait yedek yalnızca birleştirilebilir: sıfırlama, etkin
+profilindeki her şeyi diğer profilin verileriyle değiştirirdi.
+
+Yalnızca bu tarayıcıda tutulan değerler, örneğin görünüm ayarları,
+birleştirmedeki gibi uygulanır: yedekte olan seninkinin yerini alır,
+yedekte olmayan kalır.
+
 ---
 
 ## Cross-Identity içe aktarma

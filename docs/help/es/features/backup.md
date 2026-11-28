@@ -86,6 +86,34 @@ curso se conserva la que llegó más lejos. Se conservan los
 intentos, el mejor resultado y el historial de intentos de ambos
 lados.
 
+### Combinar o restablecer
+
+Después de elegir el archivo, la app pregunta cómo se aplica la copia:
+
+- **Combinar** está preseleccionado. Añade lo que le falta a este
+  dispositivo y no borra nada. Lo que borraste después de la copia vuelve.
+- **Restablecer a la copia** deja este dispositivo exactamente en el estado
+  de la copia: tu progreso, tus propias lecciones y tus sets descargados.
+  Todo lo que se añadió o cambió desde la copia se elimina y no se puede
+  recuperar. Un diálogo te pide confirmación antes de que ocurra nada.
+
+Un restablecimiento no toca: tus claves de IA, los demás perfiles de
+aprendizaje de este dispositivo y las listas que comparten todos los
+perfiles (materias, catálogo de insignias).
+
+Todos los perfiles de un dispositivo comparten los sets, así que un
+restablecimiento los cambia para todos los perfiles.
+
+Un restablecimiento se hace por completo o no se hace. Si la copia no se
+puede aplicar entera, no se cambia nada y la app te lo dice.
+
+Una copia que pertenece a otro perfil solo se puede combinar: un
+restablecimiento sustituiría todo tu perfil activo por los datos del otro.
+
+Los valores que solo se guardan en este navegador, como los ajustes de
+visualización, se aplican como al combinar: lo que contiene la copia
+sustituye al tuyo, lo que no contiene se queda.
+
 ---
 
 ## Importación entre identidades

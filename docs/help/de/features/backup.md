@@ -84,6 +84,36 @@ laufenden Lektionen bleibt die, die weiter gekommen ist. Die
 Versuche, das beste Ergebnis und der Verlauf beider Seiten bleiben
 erhalten.
 
+### Zusammenführen oder zurücksetzen
+
+Nach der Auswahl der Datei fragt die App, wie das Backup eingespielt wird:
+
+- **Zusammenführen** ist vorausgewählt. Es ergänzt, was diesem Gerät fehlt,
+  und löscht nichts. Was du nach dem Backup gelöscht hast, kommt zurück.
+- **Auf die Sicherung zurücksetzen** bringt dieses Gerät genau auf den
+  Stand des Backups: deinen Lernstand, deine eigenen Lektionen und deine
+  heruntergeladenen Sets. Alles, was seit dem Backup dazukam oder geändert
+  wurde, wird entfernt und lässt sich nicht zurückholen. Ein Dialog fragt
+  vorher nach, bevor etwas geschieht.
+
+Ein Zurücksetzen lässt unberührt: deine KI-Schlüssel, die anderen
+Lernprofile auf diesem Gerät und die Listen, die sich alle Profile teilen
+(Fächer, Abzeichen-Katalog).
+
+Die Sets teilen sich alle Profile eines Geräts. Ein Zurücksetzen ändert sie
+deshalb für jedes Profil.
+
+Ein Zurücksetzen geschieht ganz oder gar nicht. Lässt sich das Backup nicht
+vollständig einspielen, wird nichts geändert, und die App sagt es dir.
+
+Ein Backup, das zu einem anderen Profil gehört, lässt sich nur
+zusammenführen: Ein Zurücksetzen würde alles in deinem aktiven Profil durch
+die Daten des anderen ersetzen.
+
+Werte, die nur in diesem Browser liegen, etwa Anzeige-Einstellungen, werden
+wie beim Zusammenführen eingespielt: Was das Backup enthält, ersetzt deinen
+Wert, was es nicht enthält, bleibt.
+
 ---
 
 ## Cross-Identity-Import

@@ -389,6 +389,31 @@ Noch nie durchgefuehrt. JETZT machen.
       1.x, nichts wird übernommen. Mit `version` `abc` → "Die Formatversion
       dieses Backups ist nicht lesbar". Beides auch im Onboarding über
       "Aus bestehendem Backup wiederherstellen".
+- [ ] TC-1010 Zusammenführen oder zurücksetzen (#3787): nach der Auswahl einer
+      Sicherungsdatei unter Einstellungen → Daten bietet "Wie soll die
+      Sicherung eingespielt werden?" die Wahl "Zusammenführen" und "Auf die
+      Sicherung zurücksetzen", gewählt ist "Zusammenführen". Unverändert
+      führt die Schaltfläche zum Wiederherstellen sofort zusammen wie
+      bisher: nichts wird
+      gelöscht, eine nach der Sicherung begonnene Lektion ist noch da.
+- [ ] TC-1011 Auf die Sicherung zurücksetzen (#3787): eine Sicherung exportieren;
+      danach eine neue Lektion beginnen, eine eigene Lektion löschen und ein
+      weiteres Set herunterladen. Die Sicherung importieren, "Auf die
+      Sicherung zurücksetzen" wählen: die Schaltfläche heißt jetzt "Auf die
+      Sicherung zurücksetzen" und öffnet einen Dialog, der sagt, was
+      entfernt wird, dass die KI-Schlüssel bleiben und dass sich alle
+      Profile die Sets teilen. "Abbrechen" ändert nichts. Nach dem
+      Bestätigen: "Zurücksetzen abgeschlossen. Dieses Gerät entspricht jetzt
+      der Sicherung."; der Stand der neuen Lektion ist weg, die gelöschte
+      eigene Lektion ist wieder da, das später geladene Set ist weg, der
+      KI-Schlüssel funktioniert weiter. Einmal im Servermodus und einmal im
+      Browsermodus.
+- [ ] TC-1012 Zurücksetzen mit der Sicherung eines anderen Profils (#3787): eine
+      Sicherung importieren, die unter einem anderen Lernprofil entstand.
+      "Auf die Sicherung zurücksetzen" lässt sich nicht wählen, und der Text
+      darunter nennt den Grund (ein Zurücksetzen würde alles im aktiven
+      Profil durch die Daten des anderen ersetzen). "Zusammenführen" geht
+      weiterhin.
 
 ---
 
