@@ -151,7 +151,7 @@ export function buildPrTitle(details: CommunityPrDetails): string {
 /** Build the Markdown PR body (the maintainer-facing summary). Used
  *  both as the ``description=`` param on the create-file URL (so the
  *  PR body pre-fills) and as the "copy this into the PR description"
- *  text on the large-lesson upload path. */
+ *  text on the upload path. */
 export function buildPrBody(details: CommunityPrDetails): string {
   const lines: string[] = [
     "## New lesson",
@@ -190,14 +190,7 @@ export function buildPrBody(details: CommunityPrDetails): string {
   return lines.join("\n");
 }
 
-/** Conservative URL-length cap for the GitHub Web new-file editor.
- *  GitHub itself accepts more, but mobile browsers and a few
- *  proxies/servers refuse much beyond this. When the JSON (plus the
- *  pre-filled PR title + body) would push the URL over this, callers
- *  fall back to the download + upload-page path. */
-export const MAX_PR_URL_LENGTH = 8000;
-
-/** Shape the GitHub Web new-file editor expects. */
+/** What the GitHub Web new-file editor is opened with. */
 export interface CommunityPrUrlArgs {
   /** ``owner/repo``. */
   repo: string;
@@ -208,66 +201,48 @@ export interface CommunityPrUrlArgs {
    *  ``sets/de/fr-a1/lessons/16-konjugation.json`` — built by the
    *  caller from the placement engine (auto-numbered, slugged). */
   filePath: string;
-  /** The lesson to ship; its full JSON lands in ``?value=``. */
-  lesson: ContentLesson;
   /** Pre-fills the commit message + PR title. */
   prTitle: string;
   /** Pre-fills the commit description + PR body (Markdown). */
   prBody: string;
 }
 
-/** Result of building the create-file PR URL: the URL plus whether the
- *  lesson CONTENT was pre-filled into the editor. ``prefilled: false``
- *  means the JSON was too large to ride in the URL, so the editor opens
- *  at the right path with the commit message/body but no content — the
- *  caller downloads the JSON so the user pastes/attaches it. */
-export interface CommunityPrUrl {
-  url: string;
-  prefilled: boolean;
-}
-
 /** Build the GitHub Web "new file" URL that opens a commit editor at the
  *  lesson's full tree path, with the commit message + description (which
- *  seed the PR title + body) and — when it fits — the JSON content
- *  pre-filled. The user clicks "Propose new file"; GitHub auto-forks for
- *  non-collaborators and opens the PR draft — zero auth, zero token.
+ *  seed the PR title + body). The user pastes the downloaded lesson file
+ *  and clicks "Propose new file"; GitHub auto-forks for non-collaborators
+ *  and opens the PR draft — zero auth, zero token.
+ *
+ *  The lesson CONTENT is never part of this URL (#3839). GitHub receives
+ *  the address the moment the editor opens, as a GET, before the learner
+ *  confirms anything; the address also lands in the browser history and
+ *  in the logs of servers and proxies. Until #3839 a lesson small enough
+ *  for the URL (12 of 619 measured) travelled there whole. Now nothing of
+ *  the lesson's content leaves the device before the learner submits on
+ *  GitHub. That is also why this function does not take the lesson.
  *
  *  The create-file (``/new/``) flow is used for EVERY single lesson
- *  (not just small ones) because, unlike the ``/upload/`` page, it
- *  creates new nested directories — which is exactly the "you're the
- *  first to contribute this set" case, where ``sets/{src}/{tgt-level}/
- *  lessons/`` does not exist yet. When the JSON would push the URL past
- *  ``MAX_PR_URL_LENGTH`` the content is omitted (``prefilled: false``)
- *  but the path + commit metadata still pre-fill, so the file always
- *  lands at the correct location.
+ *  because, unlike the ``/upload/`` page, it creates new nested
+ *  directories — which is exactly the "you're the first to contribute
+ *  this set" case, where ``sets/{src}/{tgt-level}/lessons/`` does not
+ *  exist yet.
+ *
+ *  @example
+ *  communityPrUrl({ repo: "o/r", branch: "main", filePath, prTitle, prBody })
  */
-export function communityPrUrl(args: CommunityPrUrlArgs): CommunityPrUrl {
-  const { repo, branch, filePath, lesson, prTitle, prBody } = args;
-  const withValue = new URLSearchParams({
-    filename: filePath,
-    value: lessonJson(lesson),
-    message: prTitle,
-    description: prBody,
-  });
-  const full = `https://github.com/${repo}/new/${branch}?${withValue.toString()}`;
-  if (full.length <= MAX_PR_URL_LENGTH) return { url: full, prefilled: true };
-  // Too large to carry the content in the URL: open the create-file
-  // editor at the right path (filename + commit message/body) WITHOUT
-  // the content. The caller downloads the JSON so the user pastes it in.
-  const noValue = new URLSearchParams({
+export function communityPrUrl(args: CommunityPrUrlArgs): string {
+  const { repo, branch, filePath, prTitle, prBody } = args;
+  const query = new URLSearchParams({
     filename: filePath,
     message: prTitle,
     description: prBody,
   });
-  return {
-    url: `https://github.com/${repo}/new/${branch}?${noValue.toString()}`,
-    prefilled: false,
-  };
+  return `https://github.com/${repo}/new/${branch}?${query.toString()}`;
 }
 
 /** GitHub Web "upload files" page for the lesson's target directory.
- *  Used on the large-lesson path: the caller downloads the JSON, then
- *  opens this so the user drag-drops the file. GitHub auto-forks +
+ *  Used for a set with several lessons: the caller downloads the JSON
+ *  files, then opens this so the user drag-drops them. GitHub auto-forks +
  *  opens a PR on "Propose changes". No URL-length limit (the file
  *  content is uploaded, not URL-encoded).
  *
