@@ -896,8 +896,6 @@ settings:
   voice:
     tts_enabled: Show speech buttons
     tts_enabled_help: Reads AI responses aloud when you click the speaker icon.
-    auto_play: Auto-play AI responses
-    auto_play_help: Speak each AI response automatically (default off).
     tts_voice: Voice
     tts_voice_help: Default uses the closest match for your project language.
     voice_default: Default (auto-pick)
@@ -3038,7 +3036,6 @@ content:
     ready_to_share: "Everything's ready. Share your lesson as a pull request?"
     share_button: Share
     thanks: Thanks for sharing! Your contribution helps other learners.
-    submitted: "A pull request was opened on GitHub with your lesson pre-filled. Review it and click \"Create pull request\" - the content-repo CI validates it automatically."
     view_submission: "Open the pull request on GitHub"
     view_upload: "Open the GitHub upload page"
     popup_blocked: "Your browser blocked the GitHub tab. Click the link below to open it manually."

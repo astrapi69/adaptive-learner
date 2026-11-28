@@ -938,8 +938,6 @@
     "voice": {
       "tts_enabled": "Mostrar botões de voz",
       "tts_enabled_help": "Lê respostas da IA em voz alta.",
-      "auto_play": "Reproduzir respostas da IA automaticamente",
-      "auto_play_help": "Fala cada resposta automaticamente (padrão: desativado).",
       "tts_voice": "Voz",
       "tts_voice_help": "Padrão: melhor correspondência com seu idioma.",
       "voice_default": "Padrão (auto)",
@@ -3271,7 +3269,6 @@
       "ready_to_share": "Tudo pronto. Compartilhar sua lição como pull request?",
       "share_button": "Compartilhar",
       "thanks": "Obrigado por compartilhar! A sua contribuição ajuda outros estudantes.",
-      "submitted": "Um pull request foi aberto no GitHub com sua lição pré-preenchida. Revise e clique em \"Create pull request\" - a CI do repositório de conteúdo o valida automaticamente.",
       "view_submission": "Abrir o pull request no GitHub",
       "view_upload": "Abrir a página de upload do GitHub",
       "popup_blocked": "O seu navegador bloqueou a aba do GitHub. Clique no link abaixo para abri-la manualmente.",

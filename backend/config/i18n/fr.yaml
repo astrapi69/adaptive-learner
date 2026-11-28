@@ -896,8 +896,6 @@ settings:
   voice:
     tts_enabled: Afficher les boutons de lecture
     tts_enabled_help: Lit les réponses IA à voix haute.
-    auto_play: Lire automatiquement les réponses IA
-    auto_play_help: Lit chaque réponse automatiquement (désactivé par défaut).
     tts_voice: Voix
     tts_voice_help: 'Par défaut : meilleure correspondance avec ta langue.'
     voice_default: Défaut (auto)
@@ -3029,7 +3027,6 @@ content:
     ready_to_share: "Tout est prêt. Partager ta leçon sous forme de pull request ?"
     share_button: Partager
     thanks: Merci d''avoir partagé ! Ta contribution aide d''autres apprenants.
-    submitted: "Une pull request a été ouverte sur GitHub avec ta leçon pré-remplie. Vérifie-la et clique sur « Create pull request » - la CI du dépôt de contenu la valide automatiquement."
     view_submission: "Ouvrir la pull request sur GitHub"
     view_upload: "Ouvrir la page d'envoi GitHub"
     popup_blocked: "Ton navigateur a bloqué l'onglet GitHub. Clique sur le lien ci-dessous pour l'ouvrir manuellement."
