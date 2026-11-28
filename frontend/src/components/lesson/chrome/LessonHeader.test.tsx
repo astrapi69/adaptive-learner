@@ -155,3 +155,38 @@ describe("LessonHeader", () => {
     );
   });
 });
+
+describe("LessonHeader reserves the set line while its title loads (#3772)", () => {
+  it("renders an empty line of the set line's shape while the title is pending", () => {
+    renderHeader({ setTitle: null, setTitlePending: true });
+
+    const pending = screen.getByTestId("lesson-header-set-pending");
+    // Same classes as the real line, so the same height: when the title
+    // arrives the text changes and the geometry does not.
+    expect(pending).toHaveClass("lesson-header-set", "truncate", "text-sm");
+    expect(pending).toHaveAttribute("aria-hidden", "true");
+    expect(screen.queryByTestId("lesson-header-set")).not.toBeInTheDocument();
+  });
+
+  it("gives the real line the classes the reserved one has", () => {
+    renderHeader();
+
+    expect(screen.getByTestId("lesson-header-set")).toHaveClass(
+      "lesson-header-set",
+      "truncate",
+      "text-sm",
+    );
+    expect(
+      screen.queryByTestId("lesson-header-set-pending"),
+    ).not.toBeInTheDocument();
+  });
+
+  it("renders no line once the set is known to have no title", () => {
+    renderHeader({ setTitle: null, setTitlePending: false });
+
+    expect(screen.queryByTestId("lesson-header-set")).not.toBeInTheDocument();
+    expect(
+      screen.queryByTestId("lesson-header-set-pending"),
+    ).not.toBeInTheDocument();
+  });
+});

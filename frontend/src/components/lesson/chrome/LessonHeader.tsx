@@ -19,6 +19,9 @@ import { useI18n } from "../../../hooks/ui/useI18n";
 interface LessonHeaderProps {
   lesson: ContentLesson;
   setTitle: string | null;
+  /** The set title is still loading: the line's height is reserved, so
+   *  its arrival changes text and not geometry (#3772). */
+  setTitlePending?: boolean;
   /** Position of this lesson in its set (#2793); omitted when unknown. */
   position?: SetPosition | null;
   /** Route of the preceding lesson, when there is one (#2793). */
@@ -33,6 +36,7 @@ interface LessonHeaderProps {
 export default function LessonHeader({
   lesson,
   setTitle,
+  setTitlePending = false,
   position = null,
   prevHref = null,
   nextHref = null,
@@ -83,6 +87,17 @@ export default function LessonHeader({
             <span className="min-h-9 min-w-9" aria-hidden="true" />
           )}
         </div>
+      )}
+      {!setTitle && setTitlePending && (
+        // #3772 - the line the title will fill, at its height. Without it
+        // the line arrived after the first paint and pushed step 1 down.
+        <p
+          className="lesson-header-set truncate text-sm"
+          aria-hidden="true"
+          data-testid="lesson-header-set-pending"
+        >
+          {"\u00a0"}
+        </p>
       )}
       {setTitle && (
         // #959 — keep the set context compact (smaller, single line with

@@ -91,4 +91,38 @@ describe("useLessonSetContext", () => {
         expect(listLessons).not.toHaveBeenCalled();
         expect(listSets).not.toHaveBeenCalled();
     });
+
+    it("says the set title is pending until the set listing has answered (#3772)", async () => {
+        listLessons.mockResolvedValue({lessons: []});
+        let answer: (value: {sets: {id: string; title: string}[]}) => void = () => undefined;
+        listSets.mockReturnValue(
+            new Promise((resolve) => {
+                answer = resolve;
+            }),
+        );
+        const {result} = renderHook(() => useLessonSetContext(ARGS));
+
+        expect(result.current.setTitlePending).toBe(true);
+        expect(result.current.setTitle).toBeNull();
+
+        answer({sets: [{id: ARGS.setId, title: "A set"}]});
+        await waitFor(() => expect(result.current.setTitlePending).toBe(false));
+        expect(result.current.setTitle).toBe("A set");
+    });
+
+    it("stops being pending when the set listing fails (#3772)", async () => {
+        listLessons.mockResolvedValue({lessons: []});
+        listSets.mockRejectedValue(new Error("offline"));
+        const {result} = renderHook(() => useLessonSetContext(ARGS));
+
+        await waitFor(() => expect(result.current.setTitlePending).toBe(false));
+        expect(result.current.setTitle).toBeNull();
+    });
+
+    it("is not pending for a lesson without a set (#3772)", () => {
+        listLessons.mockResolvedValue({lessons: []});
+        const {result} = renderHook(() => useLessonSetContext({...ARGS, setId: ""}));
+
+        expect(result.current.setTitlePending).toBe(false);
+    });
 });

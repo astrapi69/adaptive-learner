@@ -87,6 +87,11 @@ export function useLessonSetContext({
     // Thema" media item.
     const [setBook, setSetBook] = useState<ContentSetBook | null>(null);
     const [setEvaluation, setSetEvaluation] = useState<SetEvaluation | null>(null);
+    // #3772 - the set this hook has an answer for (or a failure). Until it
+    // is the current one the title is pending, and the header reserves
+    // the line: the listing can take seconds on a slow connection, and a
+    // line arriving late moved the first step after it was painted.
+    const [answeredSetId, setAnsweredSetId] = useState<string | null>(null);
     useEffect(() => {
         if (!setId) {
             setSetTitle(null);
@@ -105,12 +110,14 @@ export function useLessonSetContext({
                 setSetDomain(match?.domain ?? null);
                 setSetBook(match?.book ?? null);
                 setSetEvaluation(match?.evaluation ?? null);
+                setAnsweredSetId(setId);
             } catch {
                 if (!cancelled) {
                     setSetTitle(null);
                     setSetDomain(null);
                     setSetBook(null);
                     setSetEvaluation(null);
+                    setAnsweredSetId(setId);
                 }
             }
         })();
@@ -124,6 +131,8 @@ export function useLessonSetContext({
         prevLessonFilename,
         position,
         setTitle,
+        /** The set title has not been answered yet (#3772). */
+        setTitlePending: setId !== "" && answeredSetId !== setId,
         setDomain,
         setBook,
         setEvaluation,
